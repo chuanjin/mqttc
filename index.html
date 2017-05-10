@@ -4,12 +4,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title></title>
+    <title>MQTT Client</title>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css" type="text/css" media="all" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" media="all" />
-
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
     <script src="https://unpkg.com/vue@2.3.2" charset="utf-8"></script>
@@ -155,10 +153,28 @@
                                     </span>
                                 </p>
                             </div>
-                            <p class="control">
-                                <a class="button is-success" @click="subscribe">Subscribe</a>
-                            </p>
-                            <ul id='ws'>
+
+                            <div class="field">
+                                <p class="control">
+                                    <a class="button is-success" @click="subscribe">Subscribe</a>
+                                </p>
+                            </div>
+
+                            <ul>
+                                <li v-for="item in items">
+                                    <div class="field">
+                                        <p class="control">
+                                            <article class="message is-warning">
+                                                <div class="message-header">
+                                                    <p>Topic: {{item.topic}}</p>
+                                                </div>
+                                                <div class="message-body">
+                                                    Payload: {{item.payload}}
+                                                </div>
+                                            </article>
+                                        </p>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -179,7 +195,8 @@
                 password: '',
                 pubTopic: '',
                 payload: '',
-                subTopic: ''
+                subTopic: '',
+                items: []
             },
             methods: {
                 connect: function() {
@@ -194,8 +211,7 @@
                     message = new Paho.MQTT.Message(this.payload)
                     message.destinationName = this.pubTopic
                     client.send(message)
-
-                }
+                },
             }
         })
 
@@ -231,7 +247,10 @@
         function onMessageArrived(message) {
             var topic = message.destinationName;
             var payload = message.payloadString;
-            $('#ws').prepend('<li>' + topic + ' = ' + payload + '<\/li>');
+            connection.items.unshift({
+                topic: topic,
+                payload: payload
+            })
         };
     </script>
 </body>
