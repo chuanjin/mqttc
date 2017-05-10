@@ -91,6 +91,10 @@
                 </div>
             </div>
 
+            <label class="label">Clean Session
+                <input type="checkbox" checked @click="toggleCS">
+            </label>
+
             <div class="field">
                 <div id="connected">
                     <div v-if="status">
@@ -134,6 +138,21 @@
                                     </span>
                                 </p>
                             </div>
+                            <div class="field">
+                                <label class="label">QoS</label>
+                                <p class="control">
+                                    <span class="select">
+                                  <select v-model="pubQoS">
+                                    <option>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                  </select>
+                                </span>
+                                </p>
+                            </div>
+                            <label class="label">Retain
+                                <input type="checkbox" @click="toggleRetain">
+                            </label>
                             <p class="control">
                                 <a class="button is-success" @click="publish">Publish</a>
                             </p>
@@ -153,7 +172,18 @@
                                     </span>
                                 </p>
                             </div>
-
+                            <div class="field">
+                                <label class="label">QoS</label>
+                                <p class="control">
+                                    <span class="select">
+                                  <select v-model="subQoS">
+                                    <option>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                  </select>
+                                </span>
+                                </p>
+                            </div>
                             <div class="field">
                                 <p class="control">
                                     <a class="button is-success" @click="subscribe">Subscribe</a>
@@ -191,38 +221,49 @@
                 port: '',
                 status: false,
                 clientId: '',
+                cleanSession: true,
                 username: '',
                 password: '',
                 pubTopic: '',
+                pubQoS: 0,
+                retain: false,
                 payload: '',
                 subTopic: '',
+                subQoS: 0,
                 items: []
             },
             methods: {
                 connect: function() {
-                    MQTTconnect(this.host, Number(this.port), this.clientId);
+                    MQTTconnect(this.host, Number(this.port), this.clientId, this.cleanSession, this.username, this.password);
                 },
                 subscribe: function() {
                     client.subscribe(this.subTopic, {
-                        qos: 0
+                        qos: Number(this.subQoS)
                     });
                 },
                 publish: function() {
-                    message = new Paho.MQTT.Message(this.payload)
-                    message.destinationName = this.pubTopic
-                    client.send(message)
+                    client.send(this.pubTopic, this.payload, Number(this.pubQoS), this.retain)
                 },
+                toggleCS: function() {
+                    this.cleanSession = !this.cleanSession
+                    console.log(this.cleanSession)
+                },
+                toggleRetain: function() {
+                    this.retain = !this.retain
+                }
             }
         })
 
         var client;
         var reconnectTimeout = 2000;
 
-        function MQTTconnect(host, port, clientId) {
+        function MQTTconnect(host, port, clientId, cleanSession, username, password) {
             client = new Paho.MQTT.Client(host, port, clientId);
             var options = {
+                userName: username,
+                password: password,
                 timeout: 3,
-                cleanSession: false,
+                cleanSession: cleanSession,
                 onSuccess: onConnect,
                 onFailure: function(message) {
                     setTimeout(MQTTconnect, reconnectTimeout);
