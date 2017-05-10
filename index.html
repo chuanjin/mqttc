@@ -22,7 +22,7 @@
                     MQTT client
                 </h1>
                 <h2 class="subtitle">
-                    using websocket, vue.js and Bulma
+                    using Websocket, Vue.js and Bulma
                 </h2>
             </div>
         </div>
@@ -65,15 +65,11 @@
                 <div class="column">
                     <div class="field">
                         <label class="label">Client ID</label>
-                        <p class="control has-icons-left has-icons-right">
+                        <p class="control has-icons-left">
                             <input class="input is-success" v-model="clientId" type="text" placeholder="clientId">
                             <span class="icon is-small is-left">
                                 <i class="fa fa-id-card-o"></i>
                             </span>
-                            <span class="icon is-small is-right">
-                                <i class="fa fa-asterisk"></i>
-                            </span>
-
                         </p>
                     </div>
                 </div>
@@ -126,9 +122,9 @@
                                 </label>
                             </div>
                         </p>
-                        <p class="control">
+                        <div class="field">
                             <div class="button is-success" @click="connect">Connect</div>
-                        </p>
+                        </div>
                     </div>
                 </div>
                 <div class="column is-3">
@@ -156,7 +152,7 @@
                                 <div class="field">
                                     <label class="label">Topic to publish</label>
                                     <p class="control has-icons-left has-icons-right">
-                                        <input class="input is-success" v-model="pubTopic" type="text" placeholder="topic">
+                                        <input class="input is-success" v-model="pubTopic" type="text" placeholder="Topic">
                                         <span class="icon is-small is-left">
                                             <i class="fa fa-pencil"></i>
                                         </span>
@@ -189,9 +185,9 @@
                                 <label class="label">Retain
                                     <input type="checkbox" @click="toggleRetain">
                                 </label>
-                                <p class="control">
+                                <div class="field">
                                     <div class="button is-primary" @click="publish">Publish</div>
-                                </p>
+                                </div>
                             </div>
                         </div>
                         <div class="column">
@@ -212,17 +208,17 @@
                                     <label class="label">QoS</label>
                                     <p class="control">
                                         <span class="select">
-                                  <select v-model="subQoS">
-                                    <option>0</option>
-                                    <option>1</option>
-                                    <option>2</option>
-                                  </select>
-                                </span>
+                                            <select v-model="subQoS">
+                                                <option>0</option>
+                                                <option>1</option>
+                                                <option>2</option>
+                                            </select>
+                                        </span>
                                     </p>
                                 </div>
-                                <p class="control">
+                                <div class="field">
                                     <div class="button is-primary" @click="subscribe">Subscribe</div>
-                                </p>
+                                </div>
 
                                 <ul>
                                     <li v-for="item in items">
