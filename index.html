@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title></title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.4.1/css/bulma.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css" media="all" />
+
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+    <script src="https://unpkg.com/vue@2.3.2" charset="utf-8"></script>
+
+</head>
+
+<body>
+    <h1>Mosquitto Websockets Client</h1>
+    <section class="section">
+        <div class="box" id="connection">
+            <div class="columns">
+
+                <div class="column is-3">
+                    <div class="field">
+                        <label class="label">Host</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input is-success" v-model="host" type="text" placeholder="localhost">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-cloud"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fa fa-asterisk"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column is-2">
+                    <div class="field">
+                        <label class="label">Port</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input is-success" v-model="port" type="text" placeholder="1884">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-sun-o"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fa fa-asterisk"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Client ID</label>
+                        <p class="control has-icons-left has-icons-right">
+                            <input class="input is-success" v-model="clientId" type="text" placeholder="clientId">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-id-card-o"></i>
+                            </span>
+                            <span class="icon is-small is-right">
+                                <i class="fa fa-asterisk"></i>
+                            </span>
+
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Username: </label>
+                        <p class="control has-icons-left">
+                            <input class="input is-success" v-model="username" type="text" placeholder="Username">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-user"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="column">
+                    <div class="field">
+                        <label class="label">Password: </label>
+                        <p class="control has-icons-left">
+                            <input class="input is-success" v-model="password" type="password" placeholder="Password">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-lock"></i>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="field">
+                <div id="connected">
+                    <div v-if="status">
+                        <label>Status: 
+                            <i class="fa fa-check"></i>
+                        </label>
+                    </div>
+                    <div v-else>
+                        <label class="label">Status: 
+                            <div class="delete"></div>
+                        </label>
+                    </div>
+                </div>
+                <p class="control">
+                    <a id="connectBtn" class="button is-success" @click="connect">Connect</a>
+                </p>
+            </div>
+
+            <div v-if="status">
+                <div class="columns">
+                    <div class="column">
+                        <div class="box">
+                            <div class="field">
+                                <label class="label">Topic to publish</label>
+                                <p class="control has-icons-left has-icons-right">
+                                    <input class="input is-success" v-model="pubTopic" type="text" placeholder="+/#">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa fa-pencil"></i>
+                                    </span>
+                                    <span class="icon is-small is-right">
+                                        <i class="fa fa-asterisk"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="field">
+                                <label class="label">Payload</label>
+                                <p class="control has-icons-left has-icons-right">
+                                    <textarea class="textarea" v-model="payload"></textarea>
+                                    <span class="icon is-small is-right">
+                                        <i class="fa fa-asterisk"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <p class="control">
+                                <a class="button is-success" @click="publish">Publish</a>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="box">
+                            <div class="field">
+                                <label class="label">Topic to subscribe</label>
+                                <p class="control has-icons-left has-icons-right">
+                                    <input class="input is-success" v-model="subTopic" type="text" placeholder="+/#">
+                                    <span class="icon is-small is-left">
+                                        <i class="fa fa-pencil"></i>
+                                    </span>
+                                    <span class="icon is-small is-right">
+                                        <i class="fa fa-asterisk"></i>
+                                    </span>
+                                </p>
+                            </div>
+                            <p class="control">
+                                <a class="button is-success" @click="subscribe">Subscribe</a>
+                            </p>
+                            <ul id='ws'>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script type="text/javascript">
+        var connection = new Vue({
+            el: '#connection',
+            data: {
+                host: '',
+                port: '',
+                status: false,
+                clientId: '',
+                username: '',
+                password: '',
+                pubTopic: '',
+                payload: '',
+                subTopic: ''
+            },
+            methods: {
+                connect: function() {
+                    MQTTconnect(this.host, Number(this.port), this.clientId);
+                },
+                subscribe: function() {
+                    client.subscribe(this.subTopic, {
+                        qos: 0
+                    });
+                },
+                publish: function() {
+                    message = new Paho.MQTT.Message(this.payload)
+                    message.destinationName = this.pubTopic
+                    client.send(message)
+
+                }
+            }
+        })
+
+        var client;
+        var reconnectTimeout = 2000;
+
+        function MQTTconnect(host, port, clientId) {
+            client = new Paho.MQTT.Client(host, port, clientId);
+            var options = {
+                timeout: 3,
+                cleanSession: false,
+                onSuccess: onConnect,
+                onFailure: function(message) {
+                    setTimeout(MQTTconnect, reconnectTimeout);
+                }
+            };
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+            client.connect(options);
+        }
+
+        function onConnect() {
+            connection.status = true
+        }
+
+        function onConnectionLost(responseObject) {
+            setTimeout(MQTTconnect, reconnectTimeout);
+            if (responseObject.errorCode !== 0) {
+                console.log("onConnectionLost:" + responseObject.errorMessage);
+            }
+        };
+
+        function onMessageArrived(message) {
+            var topic = message.destinationName;
+            var payload = message.payloadString;
+            $('#ws').prepend('<li>' + topic + ' = ' + payload + '<\/li>');
+        };
+    </script>
+</body>
+
+</html>
