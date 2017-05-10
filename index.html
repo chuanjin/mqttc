@@ -22,7 +22,7 @@
                     MQTT client
                 </h1>
                 <h2 class="subtitle">
-                    using websocket, vue.js and Bulma 
+                    using websocket, vue.js and Bulma
                 </h2>
             </div>
         </div>
@@ -121,107 +121,110 @@
                     </div>
                 </div>
                 <p class="control">
-                    <a id="connectBtn" class="button is-success" @click="connect">Connect</a>
+                    <div class="button is-success" @click="connect">Connect</div>
                 </p>
             </div>
 
-            <div v-if="status">
-                <div class="columns">
-                    <div class="column">
-                        <div class="box">
-                            <div class="field">
-                                <label class="label">Topic to publish</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-success" v-model="pubTopic" type="text" placeholder="+/#">
-                                    <span class="icon is-small is-left">
-                                        <i class="fa fa-pencil"></i>
-                                    </span>
-                                    <span class="icon is-small is-right">
-                                        <i class="fa fa-asterisk"></i>
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="field">
-                                <label class="label">Payload</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <textarea class="textarea" v-model="payload"></textarea>
-                                    <span class="icon is-small is-right">
-                                        <i class="fa fa-asterisk"></i>
-                                    </span>
-                                </p>
-                            </div>
-                            <div class="field">
-                                <label class="label">QoS</label>
-                                <p class="control">
-                                    <span class="select">
+            <article class="message is-warning">
+                <div class="message-header">
+                    <p>Publish & Subscribe</p>
+                </div>
+                <div class="message-body">
+                    <div class="columns">
+                        <div class="column">
+                            <div class="box">
+                                <div class="field">
+                                    <label class="label">Topic to publish</label>
+                                    <p class="control has-icons-left has-icons-right">
+                                        <input class="input is-success" v-model="pubTopic" type="text" placeholder="topic">
+                                        <span class="icon is-small is-left">
+                                            <i class="fa fa-pencil"></i>
+                                        </span>
+                                        <span class="icon is-small is-right">
+                                            <i class="fa fa-asterisk"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">Payload</label>
+                                    <p class="control has-icons-left has-icons-right">
+                                        <textarea class="textarea" v-model="payload" placeholder="Payload"></textarea>
+                                        <span class="icon is-small is-right">
+                                            <i class="fa fa-asterisk"></i>
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">QoS</label>
+                                    <p class="control">
+                                        <span class="select">
                                   <select v-model="pubQoS">
                                     <option>0</option>
                                     <option>1</option>
                                     <option>2</option>
                                   </select>
                                 </span>
+                                    </p>
+                                </div>
+                                <label class="label">Retain
+                                    <input type="checkbox" @click="toggleRetain">
+                                </label>
+                                <p class="control">
+                                    <div class="button is-primary" @click="publish">Publish</div>
                                 </p>
                             </div>
-                            <label class="label">Retain
-                                <input type="checkbox" @click="toggleRetain">
-                            </label>
-                            <p class="control">
-                                <a class="button is-success" @click="publish">Publish</a>
-                            </p>
                         </div>
-                    </div>
-                    <div class="column">
-                        <div class="box">
-                            <div class="field">
-                                <label class="label">Topic to subscribe</label>
-                                <p class="control has-icons-left has-icons-right">
-                                    <input class="input is-success" v-model="subTopic" type="text" placeholder="+/#">
-                                    <span class="icon is-small is-left">
+                        <div class="column">
+                            <div class="box">
+                                <div class="field">
+                                    <label class="label">Topic to subscribe</label>
+                                    <p class="control has-icons-left has-icons-right">
+                                        <input class="input is-success" v-model="subTopic" type="text" placeholder="+/#">
+                                        <span class="icon is-small is-left">
                                         <i class="fa fa-pencil"></i>
                                     </span>
-                                    <span class="icon is-small is-right">
+                                        <span class="icon is-small is-right">
                                         <i class="fa fa-asterisk"></i>
                                     </span>
-                                </p>
-                            </div>
-                            <div class="field">
-                                <label class="label">QoS</label>
-                                <p class="control">
-                                    <span class="select">
+                                    </p>
+                                </div>
+                                <div class="field">
+                                    <label class="label">QoS</label>
+                                    <p class="control">
+                                        <span class="select">
                                   <select v-model="subQoS">
                                     <option>0</option>
                                     <option>1</option>
                                     <option>2</option>
                                   </select>
                                 </span>
-                                </p>
-                            </div>
-                            <div class="field">
+                                    </p>
+                                </div>
                                 <p class="control">
-                                    <a class="button is-success" @click="subscribe">Subscribe</a>
+                                    <div class="button is-primary" @click="subscribe">Subscribe</div>
                                 </p>
-                            </div>
 
-                            <ul>
-                                <li v-for="item in items">
-                                    <div class="field">
-                                        <p class="control">
-                                            <article class="message is-warning">
-                                                <div class="message-header">
-                                                    <p>Topic: {{item.topic}}</p>
-                                                </div>
-                                                <div class="message-body">
-                                                    Payload: {{item.payload}}
-                                                </div>
-                                            </article>
-                                        </p>
-                                    </div>
-                                </li>
-                            </ul>
+                                <ul>
+                                    <li v-for="item in items">
+                                        <div class="field">
+                                            <p class="control">
+                                                <article class="message is-warning">
+                                                    <div class="message-header">
+                                                        <p>Topic: {{item.topic}}</p>
+                                                    </div>
+                                                    <div class="message-body">
+                                                        Payload: {{item.payload}}
+                                                    </div>
+                                                </article>
+                                            </p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </article>
         </div>
     </section>
 
