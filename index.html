@@ -107,22 +107,42 @@
                 <input type="checkbox" checked @click="toggleCS">
             </label>
 
-            <div class="field">
-                <div id="connected">
-                    <div v-if="status">
-                        <label>Status: 
-                            <i class="fa fa-check"></i>
-                        </label>
-                    </div>
-                    <div v-else>
-                        <label class="label">Status: 
-                            <div class="delete"></div>
-                        </label>
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="field">
+                        <p class="control">
+                            <div v-if="status">
+                                <label class="label">Status:
+                                    <span class="icon">
+                                        <i class="fa fa-check"></i>
+                                    </span>
+                                </label>
+                            </div>
+                            <div v-else>
+                                <label class="label">Status: 
+                                    <span class="icon">
+                                        <i class="fa fa-times"></i>
+                                    </span>
+                                </label>
+                            </div>
+                        </p>
+                        <p class="control">
+                            <div class="button is-success" @click="connect">Connect</div>
+                        </p>
                     </div>
                 </div>
-                <p class="control">
-                    <div class="button is-success" @click="connect">Connect</div>
-                </p>
+                <div class="column is-3">
+                    <div v-if="status">
+                        <div class="notification is-success">
+                            Connected!
+                        </div>
+                    </div>
+                    <div v-else>
+                        <div class="notification">
+                            No Connection!
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <article class="message is-warning">
@@ -293,6 +313,7 @@
         }
 
         function onConnectionLost(responseObject) {
+            connection.status = false
             setTimeout(MQTTconnect, reconnectTimeout);
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
