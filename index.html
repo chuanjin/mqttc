@@ -15,7 +15,19 @@
 </head>
 
 <body>
-    <h1>Mosquitto Websockets Client</h1>
+    <section class="hero is-primary">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title">
+                    MQTT client
+                </h1>
+                <h2 class="subtitle">
+                    using websocket, vue.js and Bulma 
+                </h2>
+            </div>
+        </div>
+    </section>
+
     <section class="section">
         <div class="box" id="connection">
             <div class="columns">
@@ -246,7 +258,6 @@
                 },
                 toggleCS: function() {
                     this.cleanSession = !this.cleanSession
-                    console.log(this.cleanSession)
                 },
                 toggleRetain: function() {
                     this.retain = !this.retain
