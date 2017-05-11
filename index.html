@@ -194,14 +194,15 @@
                             <div class="box">
                                 <div class="field">
                                     <label class="label">Topic to subscribe</label>
+                                    <p class="help is-success">{{subAck}}</p>
                                     <p class="control has-icons-left has-icons-right">
                                         <input class="input is-success" v-model="subTopic" type="text" placeholder="+/#">
                                         <span class="icon is-small is-left">
-                                        <i class="fa fa-pencil"></i>
-                                    </span>
+                                            <i class="fa fa-pencil"></i>
+                                        </span>
                                         <span class="icon is-small is-right">
-                                        <i class="fa fa-asterisk"></i>
-                                    </span>
+                                            <i class="fa fa-asterisk"></i>
+                                        </span>
                                     </p>
                                 </div>
                                 <div class="field">
@@ -219,7 +220,6 @@
                                 <div class="field">
                                     <div class="button is-primary" @click="subscribe">Subscribe</div>
                                 </div>
-
                                 <ul>
                                     <li v-for="item in items">
                                         <div class="field">
@@ -262,6 +262,7 @@
                 payload: '',
                 subTopic: '',
                 subQoS: 0,
+                subAck: '',
                 items: []
             },
             methods: {
@@ -269,9 +270,7 @@
                     MQTTconnect(this.host, Number(this.port), this.clientId, this.cleanSession, this.username, this.password);
                 },
                 subscribe: function() {
-                    client.subscribe(this.subTopic, {
-                        qos: Number(this.subQoS)
-                    });
+                    subscribe(this.subTopic, Number(this.subQoS))
                 },
                 publish: function() {
                     client.send(this.pubTopic, this.payload, Number(this.pubQoS), this.retain)
@@ -309,12 +308,14 @@
 
         function onFailure(message) {
             connection.notification = "Fail to Connect"
+            connection.subAck = ""
             console.log(message)
         }
 
         function onConnectionLost(responseObject) {
             connection.status = false
             connection.notification = "Connection Lost"
+            connection.subAck = ""
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
             }
@@ -327,6 +328,25 @@
                 topic: topic,
                 payload: payload
             })
+        };
+
+        function subscribe(topic, qos) {
+            var options = {
+                qos: qos,
+                onSuccess: onSubSuccess,
+                onFailure: onSubFailure
+            };
+            client.subscribe(topic, options);
+        };
+
+        function onSubFailure(message) {
+            connection.subAck = "Fail to subscribe!"
+            console.log(message)
+        };
+
+        function onSubSuccess(message) {
+            connection.subAck = "Subscribe!"
+            console.log(message)
         };
     </script>
 </body>
