@@ -130,12 +130,12 @@
                 <div class="column is-3">
                     <div v-if="status">
                         <div class="notification is-success">
-                            Connected!
+                            {{notification}}
                         </div>
                     </div>
                     <div v-else>
                         <div class="notification">
-                            No Connection!
+                            {{notification}}
                         </div>
                     </div>
                 </div>
@@ -255,6 +255,7 @@
                 cleanSession: true,
                 username: '',
                 password: '',
+                notification: 'No Connection',
                 pubTopic: '',
                 pubQoS: 0,
                 retain: false,
@@ -292,12 +293,9 @@
             var options = {
                 userName: username,
                 password: password,
-                timeout: 3,
                 cleanSession: cleanSession,
                 onSuccess: onConnect,
-                onFailure: function(message) {
-                    setTimeout(MQTTconnect, reconnectTimeout);
-                }
+                onFailure: onFailure
             };
             client.onConnectionLost = onConnectionLost;
             client.onMessageArrived = onMessageArrived;
@@ -306,11 +304,17 @@
 
         function onConnect() {
             connection.status = true
+            connection.notification = "Connected"
+        }
+
+        function onFailure(message) {
+            connection.notification = "Fail to Connect"
+            console.log(message)
         }
 
         function onConnectionLost(responseObject) {
             connection.status = false
-            setTimeout(MQTTconnect, reconnectTimeout);
+            connection.notification = "Connection Lost"
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
             }
