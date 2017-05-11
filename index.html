@@ -103,6 +103,44 @@
                 <input type="checkbox" checked @click="toggleCS">
             </label>
 
+            <div class="box">
+                <div class="columns">
+                    <div class="column is-4">
+                        <label class="label">Last Will Topic</label>
+                        <p class="control has-icons-left">
+                            <input class="input is-success" v-model="willTopic" type="text" placeholder="Will Topic">
+                            <span class="icon is-small is-left">
+                                <i class="fa fa-pencil"></i>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="column is-6">
+                        <p class="control">
+                            <label class="label">Last Will Payload</label>
+                            <input class="input is-success" v-model="willPayload" type="text" placeholder="Will Payload">
+                        </p>
+                    </div>
+
+                    <div class="column is-1">
+                        <p class="control">
+                            <label class="label">QoS</label>
+                            <span class="select">
+                                  <select v-model="willQoS">
+                                    <option>0</option>
+                                    <option>1</option>
+                                    <option>2</option>
+                                  </select>
+                            </span>
+                        </p>
+                    </div>
+                    <div class="column is-1">
+                        <label class="label">Retain</label>
+                        <input type="checkbox" @click="toggleWillRetain">
+                    </div>
+
+                </div>
+            </div>
+
             <div class="columns">
                 <div class="column is-2">
                     <div class="field">
@@ -256,6 +294,10 @@
                 username: '',
                 password: '',
                 notification: 'No Connection',
+                willTopic: '',
+                willPayload: '',
+                willQoS: 0,
+                willRetain: false,
                 pubTopic: '',
                 pubQoS: 0,
                 retain: false,
@@ -267,10 +309,32 @@
             },
             methods: {
                 connect: function() {
-                    MQTTconnect(this.host, Number(this.port), this.clientId, this.cleanSession, this.username, this.password);
+                    client = new Paho.MQTT.Client(this.host, Number(this.port), this.clientId)
+                    var options = {
+                        userName: this.username,
+                        password: this.password,
+                        cleanSession: this.cleanSession,
+                        onSuccess: onConnect,
+                        onFailure: onFailure
+                    }
+                    if (this.willTopic != '') {
+                        will = new Paho.MQTT.Message(this.willPayload)
+                        will.destinationName = this.willTopic
+                        will.qos = Number(this.willQoS)
+                        will.retained = this.willRetain
+                        options.willMessage = will
+                    }
+                    client.onConnectionLost = onConnectionLost;
+                    client.onMessageArrived = onMessageArrived;
+                    client.connect(options);
                 },
                 subscribe: function() {
-                    subscribe(this.subTopic, Number(this.subQoS))
+                    var options = {
+                        qos: this.subQoS,
+                        onSuccess: onSubSuccess,
+                        onFailure: onSubFailure
+                    };
+                    client.subscribe(this.subTopic, options);
                 },
                 publish: function() {
                     client.send(this.pubTopic, this.payload, Number(this.pubQoS), this.retain)
@@ -280,26 +344,12 @@
                 },
                 toggleRetain: function() {
                     this.retain = !this.retain
+                },
+                toggleWillRetain: function() {
+                    this.willRetain = !this.willRetain
                 }
             }
         })
-
-        var client;
-        var reconnectTimeout = 2000;
-
-        function MQTTconnect(host, port, clientId, cleanSession, username, password) {
-            client = new Paho.MQTT.Client(host, port, clientId);
-            var options = {
-                userName: username,
-                password: password,
-                cleanSession: cleanSession,
-                onSuccess: onConnect,
-                onFailure: onFailure
-            };
-            client.onConnectionLost = onConnectionLost;
-            client.onMessageArrived = onMessageArrived;
-            client.connect(options);
-        }
 
         function onConnect() {
             connection.status = true
@@ -319,7 +369,7 @@
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
             }
-        };
+        }
 
         function onMessageArrived(message) {
             var topic = message.destinationName;
@@ -328,26 +378,17 @@
                 topic: topic,
                 payload: payload
             })
-        };
-
-        function subscribe(topic, qos) {
-            var options = {
-                qos: qos,
-                onSuccess: onSubSuccess,
-                onFailure: onSubFailure
-            };
-            client.subscribe(topic, options);
-        };
+        }
 
         function onSubFailure(message) {
             connection.subAck = "Fail to subscribe!"
             console.log(message)
-        };
+        }
 
         function onSubSuccess(message) {
             connection.subAck = "Subscribe!"
             console.log(message)
-        };
+        }
     </script>
 </body>
 
