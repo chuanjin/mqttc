@@ -215,7 +215,7 @@
                                     <input type="checkbox" @click="toggleRetain">
                                 </label>
                                 <div class="field">
-                                    <div class="button is-primary" @click="publish">Publish</div>
+                                    <div class="button is-primary" :disabled="disabledBtn" @click="publish">Publish</div>
                                 </div>
                             </div>
                         </div>
@@ -247,7 +247,7 @@
                                     </p>
                                 </div>
                                 <div class="field">
-                                    <div class="button is-primary" @click="subscribe">Subscribe</div>
+                                    <div class="button is-primary" :disabled="disabledBtn" @click="subscribe">Subscribe</div>
                                 </div>
                                 <ul>
                                     <li v-for="item in items">
@@ -297,6 +297,7 @@
                 subTopic: '',
                 subQoS: 0,
                 subAck: '',
+                disabledBtn: true,
                 items: []
             },
             methods: {
@@ -348,9 +349,11 @@
             connection.status = status
             if (status) {
                 connection.statusIcon = "fa fa-check"
+                connection.disabledBtn = false
             } else {
                 connection.statusIcon = "fa fa-times"
                 connection.subAck = ""
+                connection.disabledBtn = true
             }
         }
 
