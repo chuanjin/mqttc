@@ -249,22 +249,7 @@
                                 <div class="field">
                                     <div class="button is-primary" :disabled="disabledBtn" @click="subscribe">Subscribe</div>
                                 </div>
-                                <ul>
-                                    <li v-for="item in items">
-                                        <div class="field">
-                                            <p class="control">
-                                                <article class="message is-warning">
-                                                    <div class="message-header">
-                                                        <p>Topic: {{item.topic}}</p>
-                                                    </div>
-                                                    <div class="message-body">
-                                                        Payload: {{item.payload}}
-                                                    </div>
-                                                </article>
-                                            </p>
-                                        </div>
-                                    </li>
-                                </ul>
+                                <message-list :items="items"></message-list>
                             </div>
                         </div>
                     </div>

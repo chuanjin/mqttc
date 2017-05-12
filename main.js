@@ -1,3 +1,45 @@
+Vue.component('message-list', {
+    props: ['items'],
+
+    template: '\
+        <div class="field">\
+            <p class="control">\
+                <message v-for="m in items" :key="m.topic">\
+                    <div slot="topic">{{m.topic}}</div> \
+                    <div slot="payload">{{m.payload}}</div> \
+                </message>\
+            </p>\
+        </div>'
+})
+
+
+Vue.component('message', {
+    template: '\
+        <article class = "message" v-show="isVisible" >\
+            <div class="message-header">\
+                <slot name="topic"></slot>\
+                <button class="delete" @click="toggleMe"></button>\
+            </div>\
+            <div class = "message-body" >\
+                <slot name="payload"></slot>\
+            </div>\
+        </article>\
+    ',
+
+    data: function() {
+        return {
+            isVisible: true
+        }
+    },
+
+    methods: {
+        toggleMe: function() {
+            this.isVisible = false
+        }
+    }
+})
+
+
 var connection = new Vue({
     el: '#connection',
     data: {
@@ -76,8 +118,8 @@ function updateValues(status, notification) {
         connection.disabledBtn = false
     } else {
         connection.statusIcon = "fa fa-times"
-        connection.subAck = ""
         connection.disabledBtn = true
+        connection.subAck = ""
     }
 }
 
