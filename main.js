@@ -1,26 +1,26 @@
 Vue.component('message-list', {
-    props: ['items'],
+    props: ['messages'],
 
     template: '\
         <div class="field">\
             <p class="control">\
-                <message v-for="m in items" :key="m.topic">\
+                <t-message v-for="m in messages" :key="m.topic">\
                     <div slot="topic">{{m.topic}}</div> \
                     <div slot="payload">{{m.payload}}</div> \
-                </message>\
+                </t-message>\
             </p>\
         </div>'
 })
 
 
-Vue.component('message', {
+Vue.component('t-message', {
     template: '\
-        <article class = "message" v-show="isVisible" >\
+        <article class="message" v-show="isVisible" >\
             <div class="message-header">\
                 <slot name="topic"></slot>\
                 <button class="delete" @click="toggleMe"></button>\
             </div>\
-            <div class = "message-body" >\
+            <div class="message-body" >\
                 <slot name="payload"></slot>\
             </div>\
         </article>\
