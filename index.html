@@ -103,7 +103,20 @@
                 <input type="checkbox" checked @click="toggleCS">
             </label>
 
-            <div class="box">
+            <hr>
+            <div class="columns">
+                <div class="column is-1">
+                    <label class="label">Last Will</label>
+                </div>
+                <div class="column">
+                    <a @click="toggleLW">
+                        <span class="icon">
+                          <i :class="lwIcon"></i>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <div class="box" v-show="lwShow">
                 <div class="columns">
                     <div class="column is-4">
                         <label class="label">Last Will Topic</label>
@@ -137,9 +150,9 @@
                         <label class="label">Retain</label>
                         <input type="checkbox" @click="toggleWillRetain">
                     </div>
-
                 </div>
             </div>
+            <hr>
 
             <div class="columns">
                 <div class="column is-2">

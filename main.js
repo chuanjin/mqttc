@@ -52,6 +52,8 @@ var connection = new Vue({
         username: '',
         password: '',
         notification: 'No Connection',
+        lwShow: false,
+        lwIcon: "fa fa-angle-double-down",
         willTopic: '',
         willPayload: '',
         willQoS: 0,
@@ -100,6 +102,14 @@ var connection = new Vue({
         },
         toggleCS: function() {
             this.cleanSession = !this.cleanSession
+        },
+        toggleLW: function() {
+            this.lwShow = !this.lwShow
+            if (this.lwShow){
+                this.lwIcon = "fa fa-angle-double-up"
+            } else {
+                this.lwIcon = "fa fa-angle-double-down"
+            }
         },
         toggleRetain: function() {
             this.retain = !this.retain
