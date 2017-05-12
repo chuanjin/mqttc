@@ -145,20 +145,11 @@
                 <div class="column is-2">
                     <div class="field">
                         <p class="control">
-                            <div v-if="status">
-                                <label class="label">Status:
-                                    <span class="icon">
-                                        <i class="fa fa-check"></i>
-                                    </span>
-                                </label>
-                            </div>
-                            <div v-else>
-                                <label class="label">Status: 
-                                    <span class="icon">
-                                        <i class="fa fa-times"></i>
-                                    </span>
-                                </label>
-                            </div>
+                            <label class="label">Status:
+                                <span class="icon">
+                                    <i :class="statusIcon"></i>
+                                </span>
+                            </label>
                         </p>
                         <div class="field">
                             <div class="button is-success" @click="connect">Connect</div>
@@ -289,6 +280,7 @@
                 host: '',
                 port: '',
                 status: false,
+                statusIcon: 'fa fa-times',
                 clientId: '',
                 cleanSession: true,
                 username: '',
@@ -351,21 +343,28 @@
             }
         })
 
+        function updateValues(status, notification) {
+            connection.notification = notification
+            connection.status = status
+            if (status) {
+                connection.statusIcon = "fa fa-check"
+            } else {
+                connection.statusIcon = "fa fa-times"
+                connection.subAck = ""
+            }
+        }
+
         function onConnect() {
-            connection.status = true
-            connection.notification = "Connected"
+            updateValues(true, "Connected")
         }
 
         function onFailure(message) {
-            connection.notification = "Fail to Connect"
-            connection.subAck = ""
+            updateValues(false, "Fail to Connect")
             console.log(message)
         }
 
         function onConnectionLost(responseObject) {
-            connection.status = false
-            connection.notification = "Connection Lost"
-            connection.subAck = ""
+            updateValues(false, "Connection Lost")
             if (responseObject.errorCode !== 0) {
                 console.log("onConnectionLost:" + responseObject.errorMessage);
             }
