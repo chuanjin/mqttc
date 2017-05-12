@@ -49,6 +49,8 @@ var connection = new Vue({
         statusIcon: 'fa fa-times',
         clientId: '',
         cleanSession: true,
+        credShow: false,
+        credIcon: "fa fa-angle-double-down",
         username: '',
         password: '',
         notification: 'No Connection',
@@ -103,9 +105,17 @@ var connection = new Vue({
         toggleCS: function() {
             this.cleanSession = !this.cleanSession
         },
+        toggleCred: function() {
+            this.credShow = !this.credShow
+            if (this.credShow) {
+                this.credIcon = "fa fa-angle-double-up"
+            } else {
+                this.credIcon = "fa fa-angle-double-down"
+            }
+        },
         toggleLW: function() {
             this.lwShow = !this.lwShow
-            if (this.lwShow){
+            if (this.lwShow) {
                 this.lwIcon = "fa fa-angle-double-up"
             } else {
                 this.lwIcon = "fa fa-angle-double-down"
