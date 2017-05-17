@@ -66,13 +66,20 @@
                     <div class="field">
                         <label class="label">Client ID</label>
                         <p class="control has-icons-left">
-                            <input class="input is-success" v-model="clientId" type="text" placeholder="clientId">
+                            <input class="input is-success" v-model="clientId" type="text" placeholder="Enter or Generate an ID">
                             <span class="icon is-small is-left">
                                 <i class="fa fa-id-card-o"></i>
                             </span>
                         </p>
                     </div>
                 </div>
+
+                <div class="column">
+                    <label class="label">ID Generator</label>
+                    <a class="button is-info" @click="generateID">Generate a random ID</a>
+                </div>
+
+
             </div>
 
             <label class="label">Clean Session
