@@ -5,8 +5,8 @@ Vue.component('message-list', {
         <div class="field">\
             <p class="control">\
                 <t-message v-for="m in messages" :key="m.topic">\
-                    <div slot="topic">{{m.topic}}</div> \
-                    <div slot="payload">{{m.payload}}</div> \
+                    <template slot="topic">{{m.topic}}</template> \
+                    <template slot="payload">{{m.payload}}</template> \
                 </t-message>\
             </p>\
         </div>'
