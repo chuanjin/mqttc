@@ -49,6 +49,7 @@ var connection = new Vue({
         statusIcon: 'fa fa-times',
         clientId: '',
         cleanSession: true,
+        useSSL: false,
         credShow: false,
         credIcon: "fa fa-angle-double-down",
         username: '',
@@ -77,6 +78,7 @@ var connection = new Vue({
                 userName: this.username,
                 password: this.password,
                 cleanSession: this.cleanSession,
+                useSSL: this.useSSL,
                 onSuccess: onConnect,
                 onFailure: onFailure
             }
@@ -104,6 +106,9 @@ var connection = new Vue({
         },
         toggleCS: function() {
             this.cleanSession = !this.cleanSession
+        },
+        toggleSSL: function() {
+            this.useSSL = !this.useSSL
         },
         toggleCred: function() {
             this.credShow = !this.credShow
