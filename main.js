@@ -93,7 +93,7 @@ var connection = new Vue({
         },
         subscribe: function() {
             var options = {
-                qos: this.subQoS,
+                qos: Number(this.subQoS),
                 onSuccess: onSubSuccess,
                 onFailure: onSubFailure
             };
